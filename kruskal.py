@@ -9,9 +9,6 @@
 # This code is contributed by Neelam Yadav 
 
 
-from collections import defaultdict
-
-
 # Class to represent a graph
 class Graph:
 

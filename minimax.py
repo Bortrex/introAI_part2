@@ -148,6 +148,6 @@ class PacmanAgent(Agent):
                 g.addEdge(i, j, abs(vertices[i][0] - vertices[j][0]) + abs(vertices[i][1] - vertices[j][1]))
         result = g.KruskalMST()
         sum = 0
-        for u, v, w in result:
-            sum = sum + w
+        for u, v, weight in result:
+            sum = sum + weight
         return sum
