@@ -1,8 +1,9 @@
 from pacman_module.game import Agent
 from pacman_module.pacman import Directions
-from pacman_module.util import PriorityQueue
+from pacman_module.util import PriorityQueue, manhattanDistance
 from kruskal import Graph
 import numpy as np
+
 
 class PacmanAgent(Agent):
     def __init__(self, args):
@@ -27,31 +28,78 @@ class PacmanAgent(Agent):
         -------
         - A legal move as defined in `game.Directions`.
         """
-        # legals = state.getLegalActions()
-        # legals.remove(Directions.STOP)
-        print(state.getGhostPositions())
-        self.get_max(state, 0)
-        print("Capusles-> ",state.getCapsules())
+        legals = state.getLegalActions()
+        legals.remove(Directions.STOP)
 
-        action = self._get_action(state)
-        return action
+        # print("Capusles-> ",state.getCapsules())
+
+        # action = self._get_action(state)
+
+        scores = [self.eval_function(state, successor) for successor, _ in state.generatePacmanSuccessors()]
+        bestScores = max(scores)
+        # it just returns the index of the best legal move =) according to the bestScores ;)
+        bestIdx = [idx for idx in range(len(scores)) if scores[idx] is bestScores]
+
+        # chosenIdx = np.random.choice(bestIdx)
+        # print(bestIdx, chosenIdx)
+        return legals[bestIdx[0]]
+        # return action
+
+    def eval_function(self, state, successor):
+
+        actualFood = state.getFood()
+
+        walls = state.getWalls()
+
+        # To add to the score a diagonal value of the height and width
+        # if Pacman and ghost or food are farthest in the game.
+        maxLength = walls.height - 2 + walls.width - 2
+
+        successorPos = successor.getPacmanPosition()
+        successorFood = successor.getFood().asList()
+
+        score = 0
+
+        if actualFood[successorPos[0]][successorPos[1]]:
+            score += 10
+
+        newFoodDist = np.inf
+
+        for food in successorFood:
+            foodDist = manhattanDistance(successorPos, food)
+
+            newFoodDist = min([foodDist, newFoodDist])
+
+        newGhostDist = np.inf
+
+        for ghost in successor.getGhostPositions():
+
+            ghostDist = manhattanDistance(successorPos, ghost)
+
+            newGhostDist = min([newGhostDist, ghostDist])
+
+        if newGhostDist < 2:  # to avoid be close to the Ghost
+            score -= 500
+
+        score = score + (1. / newFoodDist) + (newGhostDist / maxLength)
+
+        return score
+
+    ''' Ignore all below this line -----------------------------'''
 
     def get_max(self, state, depth):
-        if depth is state.isWin() or state.isLose():
-            return self.eval_function(state)
-
+        # if depth is state.isWin() or state.isLose():
+        #     return self.eval_function(state)
+        #
         value = -np.inf
-        legals = state.getLegalActions()
+        # legals = state.getLegalActions()
 
-        for action in legals:
-            value = max(value, self.get_min(state.generatePacmanSuccessors(), depth, 1))
+        # for action in legals:
+        #     value = max(value, self.get_min(state.generatePacmanSuccessors(), depth, 1))
 
         return value
 
     def get_min(self, state, depth, agent_idx):
-        pass
-
-    def eval_function(self, state):
         pass
 
     def _get_action(self, state):
