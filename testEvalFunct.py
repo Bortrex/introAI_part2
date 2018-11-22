@@ -1,8 +1,6 @@
 from pacman_module.game import Agent
 from pacman_module.pacman import Directions
-from pacman_module.util import PriorityQueue, manhattanDistance
-from kruskal import Graph
-import numpy as np
+from pacman_module.util import manhattanDistance
 
 
 class PacmanAgent(Agent):

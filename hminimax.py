@@ -56,7 +56,7 @@ class PacmanAgent(Agent):
 
     def max_agent(self, state, depth, alpha, beta):
         if state.isWin() or state.isLose() or depth is self.max_depth:
-            return state.getScore() + self.eval_function(state)
+            return state.getScore() # + self.eval_function(state)
 
         value = float('-inf')
         for succ, _ in state.generatePacmanSuccessors():
@@ -71,7 +71,7 @@ class PacmanAgent(Agent):
 
     def min_agent(self, state, depth, alpha, beta, idxGhost):
         if state.isWin() or state.isLose() or depth is self.max_depth:
-            return state.getScore() + self.eval_function(state)
+            return state.getScore() #+ self.eval_function(state)
 
         value = float('inf')
 
